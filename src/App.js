@@ -1,49 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import firebase from './Firebase';
+import { useState } from "react";
+import { Container, Navbar, Row, Col } from "react-bootstrap";
+import AddBook from "./components/AddBook";
+import BooksList from "./components/BooksList";
+import "./App.css";
 
-class App extends React.Component {
+function App() {
+	const [bookId, setBookId] = useState("");
 
-	books = firebase.firestore().collection("books").orderBy('rating');
+	const getBookIdHandler = (id) => {
+		console.log("The ID of document to be edited: ", id);
+		setBookId(id);
+	};
+	return (
+		<>
+			<Navbar bg="dark" variant="dark" className="header">
+				<Container>
+					<Navbar.Brand href="#home">Каталог книг</Navbar.Brand>
+				</Container>
+			</Navbar>
 
-	state = {
-		isLoading: true,
-		data: [],
-		setdata: [],
-	}
+			<Container className="bookInfo" style={{ width: "400px" }}>
+				<Row>
+					<Col className="addBook">
+						<AddBook id={bookId} setBookId={setBookId} />
+					</Col>
+				</Row>
+			</Container>
 
-	getData() {
-		this.books.onSnapshot((querySnapshot) => {
-			const items = []
-			querySnapshot.forEach((doc) => {
-				items.push(doc.data())
-			})
-			this.setdata(items)
-		})
-	}
-
-	useEffect(() {
-		getData()
-		console.log(data);
-	}, []) /* ???????????????????????? */
-
-componentDidMount() {
-	setTimeout(() => { this.setState({ isLoading: false }) }, 30)
-}
-
-render() {
-	const { isLoading, books } = this.state;
-	return <div>{isLoading ? "Loading..." : (books.map(book =>
-		<div>
-			<h1 className="title"> {book.title}asdasd</h1>
-			<div>
-				<span>
-					asdasdasd
-				</span>
-			</div>
-		</div>
-	))}</div>
-}
+			<Container>
+				<Row>
+					<Col>
+						<BooksList getBookId={getBookIdHandler} />
+					</Col>
+				</Row>
+			</Container>
+		</>
+	);
 }
 
 export default App;
